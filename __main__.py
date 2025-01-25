@@ -20,7 +20,7 @@ class Tablero:
     def generarTableroReal(self):
         self.casillas = [[] for i in range(self.alto)]
         for i in range(len(self.casillas)):
-            self.casillas[i] = ["0" for i in range(self.ancho)]
+            self.casillas[i] = [0 for i in range(self.ancho)]
         for i in range(self.minas):
             colocada = False
             while colocada == False:
@@ -28,25 +28,16 @@ class Tablero:
                 columna = random.randint(0,self.ancho-1)
                 if self.casillas[fila][columna] != "O":
                     self.casillas[fila][columna] = "O"
-                    if fila > 0 and self.casillas[fila-1][columna] != "O":
-                        self.casillas[fila-1][columna] = str(int(self.casillas[fila-1][columna]) + 1)
-                    if fila > 0 and columna > 0 and self.casillas[fila-1][columna-1] != "O":
-                        self.casillas[fila-1][columna-1] = str(int(self.casillas[fila-1][columna-1]) + 1)
-                    if fila > 0 and columna < self.ancho-1 and self.casillas[fila-1][columna+1] != "O":
-                        self.casillas[fila-1][columna+1] = str(int(self.casillas[fila-1][columna+1]) + 1)
-                    if fila < self.alto-1 and self.casillas[fila+1][columna] != "O":
-                        self.casillas[fila+1][columna] = str(int(self.casillas[fila+1][columna]) + 1)
-                    if fila < self.alto-1 and columna > 0 and self.casillas[fila+1][columna-1] != "O":
-                        self.casillas[fila+1][columna-1] = str(int(self.casillas[fila+1][columna-1]) + 1)
-                    if fila < self.alto-1 and columna < self.ancho-1 and self.casillas[fila+1][columna+1] != "O":
-                        self.casillas[fila+1][columna+1] = str(int(self.casillas[fila+1][columna+1]) + 1)
-                    if columna > 0 and self.casillas[fila][columna-1] != "O":
-                        self.casillas[fila][columna-1] = str(int(self.casillas[fila][columna-1]) + 1)
-                    if columna < self.ancho-1 and self.casillas[fila][columna+1] != "O":
-                        self.casillas[fila][columna+1] = str(int(self.casillas[fila][columna+1]) + 1)
+                    listaCoordsAdyacentes = self.listaCoordsAdyacentes(fila, columna)
+                    for i in listaCoordsAdyacentes:
+                        self.casillas[i[0]][i[1]] += 1
                     colocada = True
                 else:
                     continue
+        for i in range(len(self.casillas)):
+            for j in range(len(self.casillas[i])):
+                if self.casillas[i][j] == 0:
+                    self.casillas[i][j] = " "
 
     def generarTableroFalso(self):
         self.casillasFalsas = [[] for i in range(self.alto)]
@@ -114,6 +105,26 @@ class Tablero:
             return True
         else:
             return False
+
+    def listaCoordsAdyacentes(self, fila, columna):
+        lista = []
+        if fila > 0:
+            lista.append((fila-1, columna))
+        if fila > 0 and columna > 0:
+            lista.append((fila-1, columna-1))
+        if fila > 0 and columna < self.ancho-1:
+            lista.append((fila-1, columna+1))
+        if fila < self.alto-1:
+            lista.append((fila+1, columna))
+        if fila < self.alto-1 and columna > 0:
+            lista.append((fila+1, columna-1))
+        if fila < self.alto-1 and columna < self.ancho-1:
+            lista.append((fila+1, columna+1))
+        if columna > 0:
+            lista.append((fila, columna-1))
+        if columna < self.ancho-1:
+            lista.append((fila, columna+1))
+        return lista
 
 def main():
     print("Ancho: ", end="")
