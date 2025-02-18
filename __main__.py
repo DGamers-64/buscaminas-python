@@ -30,7 +30,8 @@ class Tablero:
                     self.casillas[fila][columna] = "O"
                     listaCoordsAdyacentes = self.listaCoordsAdyacentes(fila, columna)
                     for i in listaCoordsAdyacentes:
-                        self.casillas[i[0]][i[1]] += 1
+                        if self.casillas[i[0]][i[1]] != "O":
+                            self.casillas[i[0]][i[1]] += 1
                     colocada = True
                 else:
                     continue
@@ -85,6 +86,8 @@ class Tablero:
     
     def limpiarCasilla(self, fila, columna):
         self.casillasFalsas[fila][columna] = self.casillas[fila][columna]
+        if self.casillasFalsas[fila][columna] == " ":
+            self.limpiarCeros(fila, columna)
 
     def comprobarBomba(self):
         for i in self.casillasFalsas:
@@ -125,6 +128,22 @@ class Tablero:
         if columna < self.ancho-1:
             lista.append((fila, columna+1))
         return lista
+    
+    def limpiarCeros(self, fila, columna):
+        listaAdyacentes = self.listaCoordsAdyacentes(fila, columna)
+        listaVecinos = []
+        for i in listaAdyacentes:
+            if self.casillasFalsas[i[0]][i[1]] == "■":
+                listaVecinos.append(i)
+        for i in listaVecinos:
+            self.casillasFalsas[i[0]][i[1]] = self.casillas[i[0]][i[1]]
+        listaCeros = []
+        for i in listaVecinos:
+            if self.casillasFalsas[i[0]][i[1]] == " ":
+                listaCeros.append(i)
+        for i in listaCeros:
+            self.limpiarCeros(i[0],i[1])
+        return
 
 def main():
     print("Ancho: ", end="")
